@@ -9,7 +9,6 @@ The project is a web application that collects data from specific stocks/crypto-
 
 Created by Jeppe Holgaard Thomsen.
 
-# Running the application
 ## Backend (Spring Boot, Java and MySQL)
 The backend is a Java Spring Boot application that uses a MySQL database to store API data. The database is run in a Docker container.
 
@@ -38,7 +37,7 @@ cd frontend
 ```console
 npm install
 ```
-4. Run the frontend
+3. Run the frontend
 ```console
 npm start
 ```
