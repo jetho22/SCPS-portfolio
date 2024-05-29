@@ -1,5 +1,8 @@
-package org.scpsportfolio.backend;
+package org.scpsportfolio.backend.controller;
 
+import org.scpsportfolio.backend.model.Stock;
+import org.scpsportfolio.backend.repository.StockRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,10 +14,9 @@ import java.util.List;
 @RequestMapping("/api/stocks")
 public class StockController {
 
-
     private final StockRepository stockRepository;
-    // using constructor injection instead of @Autowired annotation (field injection)
-    // because this improves testability and makes it clear what dependencies the class has
+
+    @Autowired
     public StockController(StockRepository stockRepository) {
         this.stockRepository = stockRepository;
     }

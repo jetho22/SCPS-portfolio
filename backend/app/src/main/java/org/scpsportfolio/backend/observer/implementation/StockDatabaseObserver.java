@@ -1,7 +1,7 @@
 package org.scpsportfolio.backend.observer.implementation;
 
-import org.scpsportfolio.backend.Stock;
-import org.scpsportfolio.backend.StockRepository;
+import org.scpsportfolio.backend.model.Stock;
+import org.scpsportfolio.backend.repository.StockRepository;
 import org.scpsportfolio.backend.observer.StockObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

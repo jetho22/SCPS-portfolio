@@ -1,4 +1,4 @@
-package org.scpsportfolio.backend;
+package org.scpsportfolio.backend.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +13,42 @@ public class Stock {
     private String symbol;
     private double price;
     private long timestamp;
+
+    private Stock(Builder builder) {
+        this.symbol = builder.symbol;
+        this.price = builder.price;
+        this.timestamp = builder.timestamp;
+    }
+
+    // default no-args constructor required by Hibernate
+    public Stock() {
+    }
+
+    public static class Builder {
+        private String symbol;
+        private double price;
+        private long timestamp;
+
+        public Builder symbol(String symbol) {
+            this.symbol = symbol;
+            return this;
+        }
+
+        public Builder price(double price) {
+            this.price = price;
+            return this;
+        }
+
+        public Builder timestamp(long timestamp) {
+            this.timestamp = timestamp;
+            return this;
+        }
+
+        public Stock build() {
+            return new Stock(this);
+        }
+    }
+
 
     public Long getId() {
         return id;

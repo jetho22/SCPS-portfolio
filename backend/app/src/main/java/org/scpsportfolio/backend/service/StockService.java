@@ -1,10 +1,14 @@
-package org.scpsportfolio.backend;
+package org.scpsportfolio.backend.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import org.scpsportfolio.backend.factory.StockFactory;
+import org.scpsportfolio.backend.model.Stock;
 import org.scpsportfolio.backend.observer.implementation.StockDatabaseObserver;
-import org.scpsportfolio.backend.observer.implementation.StockSubject;
+import org.scpsportfolio.backend.observer.implementation.StockPublisher;
+import org.scpsportfolio.backend.repository.StockRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -16,24 +20,27 @@ import java.util.List;
 @Service
 public class StockService {
 
-    private static final String FINNHUB_API_KEY = "cp9r04hr01qid7962rggcp9r04hr01qid7962rh0";
+    private static final String FINNHUB_API_KEY = ""; // hiding api key from git, need to implement .env file
     private static final String FINNHUB_API_URL = "https://finnhub.io/api/v1/quote?symbol={symbol}&token=" + FINNHUB_API_KEY;
+
     private final StockRepository stockRepository;
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
+    private final StockPublisher stockPublisher;
+    private final StockFactory stockFactory;
 
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final StockSubject stockSubject = new StockSubject();
-
-
-    // using constructor injection instead of @Autowired annotation (field injection)
-    // because this improves testability and makes it clear what dependencies the class has
-    public StockService(StockRepository stockRepository) {
+    @Autowired
+    public StockService(StockRepository stockRepository, StockFactory stockFactory, StockPublisher stockPublisher, RestTemplate restTemplate, ObjectMapper objectMapper) {
         this.stockRepository = stockRepository;
+        this.stockFactory = stockFactory;
+        this.stockPublisher = stockPublisher;
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
     }
 
     @PostConstruct
     public void init() {
-        stockSubject.addObserver(new StockDatabaseObserver(stockRepository));
+        stockPublisher.addObserver(new StockDatabaseObserver(stockRepository));
     }
     // is called every 12 seconds to not exceed the Finnhub API rate limit
     @Scheduled(fixedRate = 12000)
@@ -51,12 +58,12 @@ public class StockService {
 
         try {
             JsonNode jsonNode = objectMapper.readTree(response);
-            Stock stock = new Stock();
-            stock.setSymbol(symbol);
-            stock.setPrice(jsonNode.get("c").asDouble()); // the "c" field means current price
-            stock.setTimestamp(System.currentTimeMillis());
-
-            stockSubject.notifyObservers(stock);
+            Stock stock = stockFactory.createStock(
+                    symbol,
+                    jsonNode.get("c").asDouble(),
+                    System.currentTimeMillis()
+            );
+            stockPublisher.notifyObservers(stock);
         } catch (Exception e) {
             e.printStackTrace();
         }

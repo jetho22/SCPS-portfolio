@@ -1,12 +1,14 @@
 package org.scpsportfolio.backend.observer.implementation;
 
-import org.scpsportfolio.backend.Stock;
+import org.scpsportfolio.backend.model.Stock;
 import org.scpsportfolio.backend.observer.StockObserver;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StockSubject {
+@Component
+public class StockPublisher {
     private final List<StockObserver> observers = new ArrayList<>();
 
     public void addObserver(StockObserver observer) {
