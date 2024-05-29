@@ -1,6 +1,5 @@
 package org.scpsportfolio.backend;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,24 +8,24 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/trades")
-public class TradeController {
+@RequestMapping("/api/stocks")
+public class StockController {
 
 
-    private final TradeRepository tradeRepository;
+    private final StockRepository stockRepository;
     // using constructor injection instead of @Autowired annotation (field injection)
     // because this improves testability and makes it clear what dependencies the class has
-    public TradeController(TradeRepository tradeRepository) {
-        this.tradeRepository = tradeRepository;
+    public StockController(StockRepository stockRepository) {
+        this.stockRepository = stockRepository;
     }
 
     @GetMapping
-    public List<Trade> getAllTrades() {
-        return tradeRepository.findAll();
+    public List<Stock> getAllStocks() {
+        return stockRepository.findAll();
     }
 
     @GetMapping("/{symbol}")
-    public Trade getLatestTrade(@PathVariable String symbol) {
-        return tradeRepository.findTopBySymbolOrderByTimestampDesc(symbol);
+    public Stock getLatestStock(@PathVariable String symbol) {
+        return stockRepository.findTopBySymbolOrderByTimestampDesc(symbol);
     }
 }

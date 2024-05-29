@@ -5,7 +5,7 @@ function App() {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            fetch('/api/trades')
+            fetch('/api/stocks')
                 .then(response => response.text())
                 .then(message => setMessage(message));
         }, 1000);

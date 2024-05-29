@@ -6,13 +6,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class Trade {
+public class Stock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String symbol;
     private double price;
-    private int volume;
     private long timestamp;
 
     public Long getId() {
@@ -39,13 +38,6 @@ public class Trade {
         this.price = price;
     }
 
-    public int getVolume() {
-        return volume;
-    }
-
-    public void setVolume(int volume) {
-        this.volume = volume;
-    }
 
     public long getTimestamp() {
         return timestamp;

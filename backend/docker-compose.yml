@@ -6,8 +6,8 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: trade_db
-      MYSQL_USER: trade_user
+      MYSQL_DATABASE: stock_db
+      MYSQL_USER: stock_user
       MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
