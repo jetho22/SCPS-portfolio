@@ -30,4 +30,9 @@ public class StockController {
     public Stock getLatestStock(@PathVariable String symbol) {
         return stockRepository.findTopBySymbolOrderByTimestampDesc(symbol);
     }
+
+    @GetMapping("/{symbol}/history")
+    public List<Stock> getHistoricalData(@PathVariable String symbol) {
+        return stockRepository.findBySymbolOrderByTimestampAsc(symbol);
+    }
 }

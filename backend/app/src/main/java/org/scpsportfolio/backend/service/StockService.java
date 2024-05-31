@@ -20,7 +20,7 @@ import java.util.List;
 @Service
 public class StockService {
 
-    private static final String FINNHUB_API_KEY = ""; // hiding api key from git, need to implement .env file
+    private static final String FINNHUB_API_KEY = "cpbnbapr01qqbq2abglgcpbnbapr01qqbq2abgm0"; // hiding api key from git, need to implement .env file
     private static final String FINNHUB_API_URL = "https://finnhub.io/api/v1/quote?symbol={symbol}&token=" + FINNHUB_API_KEY;
 
     private final StockRepository stockRepository;
@@ -43,9 +43,9 @@ public class StockService {
         stockPublisher.addObserver(new StockDatabaseObserver(stockRepository));
     }
     // is called every 12 seconds to not exceed the Finnhub API rate limit
-    @Scheduled(fixedRate = 12000)
+    @Scheduled(fixedRate = 4000)
     public void fetchData() {
-        List<String> symbols = Arrays.asList("AAPL", "TSLA", "AMZN", "BINANCE:BTCUSDT", "BINANCE:ETHUSDT");
+        List<String> symbols = Arrays.asList("AMZN", "AAPL", "BINANCE:BTCUSDT", "BINANCE:ETHUSDT");
 
         for (String symbol : symbols) {
             fetchStockData(symbol);

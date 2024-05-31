@@ -1,26 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import './index.css'; // Ensure your styles are imported
+import StockInfo from './components/StockInfo';
 
 function App() {
-  const [message, setMessage] = useState('');
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            fetch('/api/stocks')
-                .then(response => response.text())
-                .then(message => setMessage(message));
-        }, 1000);
-
-        // This is important, it's the cleanup function that clears the interval when the component is unmounted
-        return () => clearInterval(interval);
-    }, []);
-
-  return (
-      <div className="App">
-        <header className="App-header">
-          <p>{message}</p>
-        </header>
-      </div>
-  );
+    return (
+        <div className="App">
+            <header className="App-header">
+                <h1>Prices</h1>
+            </header>
+            <div className="stock-container">
+                <StockInfo symbol="BINANCE:BTCUSDT" />
+                <StockInfo symbol="BINANCE:ETHUSDT" />
+                <StockInfo symbol={"AMZN"} />
+                <StockInfo symbol={"AAPL"} />
+            </div>
+        </div>
+    );
 }
 
 export default App;
