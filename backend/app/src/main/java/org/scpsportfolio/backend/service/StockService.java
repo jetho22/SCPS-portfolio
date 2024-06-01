@@ -9,6 +9,7 @@ import org.scpsportfolio.backend.observer.implementation.StockDatabaseObserver;
 import org.scpsportfolio.backend.observer.implementation.StockPublisher;
 import org.scpsportfolio.backend.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -20,8 +21,8 @@ import java.util.List;
 @Service
 public class StockService {
 
-    private static final String FINNHUB_API_KEY = "cpbnbapr01qqbq2abglgcpbnbapr01qqbq2abgm0"; // hiding api key from git, need to implement .env file
-    private static final String FINNHUB_API_URL = "https://finnhub.io/api/v1/quote?symbol={symbol}&token=" + FINNHUB_API_KEY;
+    @Value("${api.key}")
+    private String FINNHUB_API_KEY;
 
     private final StockRepository stockRepository;
     private final RestTemplate restTemplate;
@@ -42,7 +43,7 @@ public class StockService {
     public void init() {
         stockPublisher.addObserver(new StockDatabaseObserver(stockRepository));
     }
-    // is called every 12 seconds to not exceed the Finnhub API rate limit
+    // is called every 4 seconds to not exceed the Finnhub API rate limit (60 calls per minute)
     @Scheduled(fixedRate = 4000)
     public void fetchData() {
         List<String> symbols = Arrays.asList("AMZN", "AAPL", "BINANCE:BTCUSDT", "BINANCE:ETHUSDT");
@@ -53,6 +54,8 @@ public class StockService {
     }
 
     private void fetchStockData(String symbol) {
+        final String FINNHUB_API_URL = "https://finnhub.io/api/v1/quote?symbol={symbol}&token=" + FINNHUB_API_KEY;
+
         String url = FINNHUB_API_URL.replace("{symbol}", symbol);
         String response = restTemplate.getForObject(url, String.class);
 

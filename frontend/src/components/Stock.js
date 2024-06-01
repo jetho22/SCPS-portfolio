@@ -40,11 +40,11 @@ function Stock({ symbol, initialPrice }) {
             }
         };
 
-        fetchStockData(); // Fetch data immediately on mount
+        fetchStockData();
 
         const interval = setInterval(fetchStockData, 4000); // Fetch data every 2 seconds
 
-        return () => clearInterval(interval); // Cleanup on unmount
+        return () => clearInterval(interval);
     }, [symbol, initialPrice]);
 
     return (

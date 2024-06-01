@@ -1,5 +1,5 @@
 import React from 'react';
-import './index.css'; // Ensure your styles are imported
+import './index.css';
 import StockInfo from './components/StockInfo';
 
 function App() {

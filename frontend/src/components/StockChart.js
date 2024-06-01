@@ -28,18 +28,18 @@ function StockChart({ symbol }) {
                         borderColor: 'rgba(75,192,192,1)',
                         backgroundColor: 'rgba(75,192,192,0.2)',
                         fill: true,
-                        pointRadius: 0, // Remove the dots from the line chart
-                        pointHoverRadius: 0 // Remove the hover effect on points
+                        pointRadius: 0,
+                        pointHoverRadius: 1
                     },
                 ],
             });
         };
 
-        fetchHistoricalData(); // Fetch data immediately on mount
+        fetchHistoricalData();
 
-        const interval = setInterval(fetchHistoricalData, 4000); // Fetch data every 2 seconds
+        const interval = setInterval(fetchHistoricalData, 4000);
 
-        return () => clearInterval(interval); // Cleanup on unmount
+        return () => clearInterval(interval);
     }, [symbol]);
 
     return (
@@ -48,8 +48,8 @@ function StockChart({ symbol }) {
                 data={chartData}
                 options={{
                 }}
-                height={400} // Increased height
-                width={600} // Increased width
+                height={400}
+                width={600}
             />
         </div>
     );
