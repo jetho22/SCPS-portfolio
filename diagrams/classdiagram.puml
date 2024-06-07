@@ -1,0 +1,130 @@
+@startuml
+
+package backend.config {
+    class AppConfig {
+        +RestTemplate restTemplate()
+        +ObjectMapper objectMapper()
+        +WebMvcConfigurer corsConfigurer()
+    }
+}
+
+package backend.controller {
+    class StockController {
+        -StockRepository stockRepository
+
+        +StockController(StockRepository stockRepository)
+        +getAllStocks(): List<Stock>
+        +getLatestStock(String symbol): Stock
+        +getHistoricalData(String symbol): List<Stock>
+    }
+}
+
+package backend.factory {
+    interface StockFactory {
+        +Stock createStock(String symbol, double price, long timestamp)
+    }
+
+    class StockFactoryImpl {
+        +Stock createStock(String symbol, double price, long timestamp)
+    }
+}
+
+package backend.model {
+    class Stock {
+        Long id
+        String symbol
+        double price
+        long timestamp
+
+        +Stock()
+        +Long getId()
+        +void setId(Long id)
+        +String getSymbol()
+        +void setSymbol(String symbol)
+        +double getPrice()
+        +void setPrice(double price)
+        +long getTimestamp()
+        +void setTimestamp(long timestamp)
+    }
+
+    class StockBuilder {
+        -String symbol
+        -double price
+        -long timestamp
+
+        +Builder symbol(String symbol)
+        +Builder price(double price)
+        +Builder timestamp(long timestamp)
+        +Stock build()
+    }
+}
+
+package backend.observer {
+    interface StockObserver {
+        +update(Stock stock)
+    }
+
+    class StockDatabaseObserver {
+        -Logger logger
+        -StockRepository stockRepository
+
+        +StockDatabaseObserver(StockRepository stockRepository)
+        +update(Stock stock)
+    }
+
+    class StockPublisher {
+        -List<StockObserver> observers
+
+        +addObserver(StockObserver observer)
+        +removeObserver(StockObserver observer)
+        +notifyObservers(Stock stock)
+    }
+}
+
+package backend.repository {
+    interface StockRepository {
+        +Stock findTopBySymbolOrderByTimestampDesc(String symbol)
+        +List<Stock> findBySymbolOrderByTimestampAsc(String symbol)
+        +void save(Stock stock)
+    }
+}
+
+package backend.service {
+    class StockService {
+        -String FINNHUB_API_KEY
+        -StockRepository stockRepository
+        -RestTemplate restTemplate
+        -ObjectMapper objectMapper
+        -StockPublisher stockPublisher
+        -StockFactory stockFactory
+
+        +StockService(StockRepository, StockFactory, StockPublisher, RestTemplate, ObjectMapper)
+        +init()
+        +fetchData()
+        -fetchStockData(String symbol)
+    }
+}
+
+backend.config.AppConfig --> RestTemplate
+backend.config.AppConfig -up-> ObjectMapper
+backend.config.AppConfig -right-> WebMvcConfigurer
+
+backend.controller.StockController --> backend.repository.StockRepository
+
+backend.factory.StockFactoryImpl -up-|> backend.factory.StockFactory
+
+backend.model.Stock --> backend.model.StockBuilder
+
+backend.observer.StockDatabaseObserver -up-|> backend.observer.StockObserver
+backend.observer.StockPublisher *--> backend.observer.StockObserver
+backend.observer.StockDatabaseObserver --> backend.repository.StockRepository
+
+backend.repository.StockRepository -down-|> JpaRepository
+
+backend.service.StockService --> backend.repository.StockRepository
+backend.service.StockService --> RestTemplate
+backend.service.StockService --> ObjectMapper
+backend.service.StockService --> backend.observer.StockPublisher
+backend.service.StockService --> backend.factory.StockFactory
+
+@enduml

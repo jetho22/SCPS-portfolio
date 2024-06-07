@@ -1,0 +1,31 @@
+@startuml
+
+actor User
+
+participant "StockService" as SS
+participant "RestTemplate" as RT
+participant "ObjectMapper" as OM
+participant "StockFactory" as SF
+participant "StockPublisher" as SP
+participant "StockRepository" as SR
+participant "StockObserver" as SO
+
+User -> SS: fetchStockData(String symbol)
+SS -> RT: getForObject("url", String.class)
+RT --> SS: String response
+
+alt if response is valid JSON
+    SS -> OM: readTree(response)
+    OM --> SS: JsonNode jsonNode
+
+    SS -> SF: createStock(symbol, jsonNode.get("c").asDouble(), System.currentTimeMillis())
+    SF --> SS: Stock stock
+
+    SS -> SP: notifyObservers(stock)
+    SP -> SO: update(stock)
+    SO -> SR: save(stock)
+else if exception occurs
+    SS -> SS: e.printStackTrace()
+end
+
+@enduml
