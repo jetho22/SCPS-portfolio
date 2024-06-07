@@ -2,13 +2,6 @@
 start
 
 :Fetch initial price from API;
-:Initial price fetched;
-
-note right
-Initial price is fetched
-from REST API and
-used as the initial price.
-end note
 
 :Initialize component with initial price;
 
